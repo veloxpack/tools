@@ -19,8 +19,7 @@ ARG ALPINE_VERSION=3.22.2
 FROM alpine:${ALPINE_VERSION} AS ffprobe-builder
 
 # Install dependencies
-RUN apk add --no-cache build-base openssl-dev pkgconfig yasm
-
+RUN apk add --no-cache build-base openssl-dev pkgconfig yasm ca-certificates openssl-libs-static
 WORKDIR /usr/src/ffmpeg
 
 # Define the FFmpeg version
