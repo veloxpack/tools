@@ -15,12 +15,11 @@ A minimal, statically-linked FFMPEG Docker image built from scratch with essenti
 - Thumbnail generation
 - Basic video/audio conversion
 - Quick video processing tasks
-- Metadata extraction with ffprobe
 - Lightweight video operations
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg-minimal`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg-lite`
 - **Base**: `scratch` (no base image)
 - **FFMPEG Version**: 8.0
 - **Alpine Build Version**: 3.22.2
@@ -28,7 +27,7 @@ A minimal, statically-linked FFMPEG Docker image built from scratch with essenti
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-minimal:latest
+docker pull ghcr.io/veloxpack/ffmpeg-lite:latest
 ```
 
 ## Usage Examples
@@ -37,7 +36,7 @@ docker pull ghcr.io/veloxpack/ffmpeg-minimal:latest
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-minimal \
+  ghcr.io/veloxpack/ffmpeg-lite \
   -i /workspace/video.mp4 \
   -ss 00:00:10 \
   -vframes 1 \
@@ -48,7 +47,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-minimal \
+  ghcr.io/veloxpack/ffmpeg-lite \
   -i /workspace/input.mp4 \
   -c:v libx264 -preset fast \
   /workspace/output.mp4
@@ -59,7 +58,7 @@ docker run --rm -v $(pwd):/workspace \
 ```bash
 docker run --rm -v $(pwd):/workspace \
   --entrypoint /ffprobe \
-  ghcr.io/veloxpack/ffmpeg-minimal \
+  ghcr.io/veloxpack/ffmpeg-lite \
   -v quiet -print_format json -show_format -show_streams \
   /workspace/video.mp4
 ```
@@ -67,5 +66,5 @@ docker run --rm -v $(pwd):/workspace \
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg-minimal ./ffmpeg-minimal
+docker build -t ffmpeg-lite ./ffmpeg-lite
 ```

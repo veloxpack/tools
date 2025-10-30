@@ -1,16 +1,16 @@
-name: Build FFMPEG minimal image
+name: Build FFMPEG lite image
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'ffmpeg-minimal/Dockerfile'
-      - '.github/workflows/ffmpeg-minimal-build.yaml'
+      - 'ffmpeg-lite/Dockerfile'
+      - '.github/workflows/ffmpeg-lite-build.yaml'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg-minimal
+  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg-lite
   ALPINE_VERSION: "3.22.2"
   MBEDTLS_VERSION: "v3.4.1"
   FFMPEG_VERSION: "8.0"
@@ -47,8 +47,8 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: ./ffmpeg-minimal
-          file: ./ffmpeg-minimal/Dockerfile
+          context: ./ffmpeg-lite
+          file: ./ffmpeg-lite/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
@@ -110,7 +110,7 @@ jobs:
           📝 **Important:** By default, packages are private. To make this image publicly accessible:
 
           1. Go to: https://github.com/${{ github.repository_owner }}/packages
-          2. Click on the \`ffmpeg-minimal\` package
+          2. Click on the \`ffmpeg-lite\` package
           3. Click "Package settings"
           4. Scroll to "Danger Zone"
           5. Click "Change visibility" → Select "Public"
