@@ -37,17 +37,21 @@ RUN ./configure \
     --disable-ffplay \
     --disable-ffmpeg \
     --disable-doc \
+    --disable-encoders \
+    --disable-decoders \
     --disable-muxers \
     --disable-swscale \
+    --disable-swresample \
     --disable-avfilter \
     --disable-avdevice \
     --disable-debug \
     --disable-bsfs \
     --disable-parsers \
     --disable-demuxers \
+    --disable-protocols \
     --enable-demuxer=flv,mov,mp4,m4a,3gp,3g2,mj2,mpegts,mpegvideo,matroska,ogg,avi \
     --enable-parser=h264,hevc,aac,mpeg4video,mpegaudio \
-    --enable-protocol=https \
+    --enable-protocol=file,http,https,rtmp,rtsp,udp \
     --enable-openssl \
     --enable-gpl \
     --enable-small \
