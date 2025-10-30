@@ -13,6 +13,7 @@ env:
   IMAGE_NAME: ${{ github.repository_owner }}/ffprobe
   ALPINE_VERSION: "3.22.2"
   FFMPEG_VERSION: "8.0"
+  MBEDTLS_VERSION: "v3.6.2"
 
 jobs:
   build-and-push-image:
@@ -65,6 +66,7 @@ jobs:
           build-args: |
             ALPINE_VERSION=${{ env.ALPINE_VERSION }}
             FFMPEG_VERSION=${{ env.FFMPEG_VERSION }}
+            MBEDTLS_VERSION=${{ env.MBEDTLS_VERSION }}
 
       - name: Generate artifact attestation
         continue-on-error: true
