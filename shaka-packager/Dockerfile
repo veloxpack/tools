@@ -53,9 +53,6 @@ RUN cmake --build build/ --config Release --parallel
 # directory itself. See https://github.com/moby/moby/issues/15858 for details.
 # COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/pssh-box-protos /usr/local/bin/pssh-box-protos
 
-# Set the entrypoint
-# ENTRYPOINT ["packager"]
-
 # Stage 2: Final container with tools available
 FROM scratch
 
