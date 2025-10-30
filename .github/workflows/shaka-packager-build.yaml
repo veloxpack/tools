@@ -11,8 +11,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/shaka-packager
-  ALPINE_VERSION: 3.22.2
-  SHAKA_PACKAGER_VERSION: v3.4.2
+  ALPINE_VERSION: "3.22.2"
+  SHAKA_PACKAGER_VERSION: "v3.4.2"
 
 jobs:
   build-and-push-image:
