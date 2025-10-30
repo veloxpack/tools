@@ -35,7 +35,6 @@ RUN apk update && \
     pkgconfig \
     yasm
 
-
 WORKDIR /usr/src
 
 # LAME - High-quality MP3 audio encoder.
@@ -147,6 +146,7 @@ WORKDIR /usr/src/ffmpeg-$FFMPEG_VERSION
 RUN ./configure \
     --pkg-config-flags="--static" \
     --disable-ffplay \
+    --disable-ffprobe \
     --disable-doc \
     --disable-hwaccels \
     --disable-vaapi \
