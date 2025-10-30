@@ -21,13 +21,13 @@ docker pull ghcr.io/veloxpack/ffmpeg:latest
 
 ---
 
-### [FFmpeg Minimal](./ffmpeg-minimal)
+### [FFmpeg Minimal](./ffmpeg-lite)
 **Lightweight video operations**
 
 A minimal FFmpeg build optimized for lightweight operations like thumbnail generation, basic video processing, and quick conversions. Includes both `ffmpeg` and `ffprobe` binaries.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-minimal:latest
+docker pull ghcr.io/veloxpack/ffmpeg-lite:latest
 ```
 
 **Key Features:**
@@ -74,22 +74,22 @@ docker pull ghcr.io/veloxpack/shaka-packager:latest
 
 ## Why VeloxPack Tools?
 
-### 🚀 Performance
+### Performance
 - **Static binaries** - No runtime dependencies or library conflicts
 - **Built from scratch** - Minimal image size with maximum performance
 - **Optimized builds** - Latest versions compiled with optimal flags
 
-### 🔒 Security
+### Security
 - **No base OS** - Reduced attack surface with scratch-based images
 - **Minimal footprint** - Only essential binaries included
 - **Static linking** - No external library vulnerabilities
 
-### 🌍 Multi-Architecture
+### Multi-Architecture
 - **AMD64** - Intel/AMD processors
 - **ARM64** - Apple Silicon, AWS Graviton, and ARM servers
 - **Unified images** - Same image works across platforms
 
-### 📦 Production Ready
+### Production Ready
 - **Industry standards** - Based on widely-used open-source tools
 - **Tested workflows** - Proven in production environments
 - **Regular updates** - Maintained with latest stable versions
@@ -109,7 +109,7 @@ docker run --rm -v $(pwd):/workspace \
 
 # 2. Generate thumbnail
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-minimal \
+  ghcr.io/veloxpack/ffmpeg-lite \
   -i /workspace/source.mp4 \
   -ss 00:00:10 -vframes 1 \
   /workspace/thumbnail.jpg
@@ -173,7 +173,7 @@ Each tool can be built independently:
 docker build -t ffmpeg ./ffmpeg
 
 # Build FFmpeg Minimal
-docker build -t ffmpeg-minimal ./ffmpeg-minimal
+docker build -t ffmpeg-lite ./ffmpeg-lite
 
 # Build FFprobe
 docker build -t ffprobe ./ffprobe
@@ -189,7 +189,7 @@ docker build -t shaka-packager ./shaka-packager
 For detailed documentation on each tool, see the individual README files:
 
 - [FFmpeg Documentation](./ffmpeg/README.md)
-- [FFmpeg Minimal Documentation](./ffmpeg-minimal/README.md)
+- [FFmpeg Minimal Documentation](./ffmpeg-lite/README.md)
 - [FFprobe Documentation](./ffprobe/README.md)
 - [Shaka Packager Documentation](./shaka-packager/README.md)
 
