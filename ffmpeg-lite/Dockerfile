@@ -61,17 +61,8 @@ RUN ./configure \
     --enable-encoder=mjpeg \
     --disable-decoders \
     --enable-decoder=h264 \
-    --enable-decoder=hevc \
     --enable-decoder=vp8 \
     --enable-decoder=vp9 \
-    --enable-decoder=av1 \
-    --enable-decoder=mpeg4 \
-    --enable-decoder=mpeg2video \
-    --enable-decoder=mpeg1video \
-    --enable-decoder=aac \
-    --enable-decoder=aac_latm \
-    --enable-decoder=mp3 \
-    --enable-decoder=mjpeg \
     --disable-hwaccels \
     --disable-muxers \
     --enable-muxer=image2 \
@@ -80,51 +71,25 @@ RUN ./configure \
     --disable-demuxers \
     --enable-demuxer=mov \
     --enable-demuxer=mp4 \
-    --enable-demuxer=m4a \
-    --enable-demuxer=3gp \
     --enable-demuxer=matroska \
-    --enable-demuxer=mpegts \
-    --enable-demuxer=mpegvideo \
-    --enable-demuxer=flv \
-    --enable-demuxer=avi \
     --disable-parsers \
     --enable-parser=h264 \
-    --enable-parser=hevc \
-    --enable-parser=mpeg4video \
-    --enable-parser=mpegvideo \
     --enable-parser=vp8 \
     --enable-parser=vp9 \
-    --enable-parser=aac \
-    --enable-parser=aac_latm \
-    --enable-parser=mpegaudio \
-    --enable-parser=mjpeg \
     --disable-bsfs \
     --enable-bsf=h264_mp4toannexb \
-    --enable-bsf=hevc_mp4toannexb \
-    --enable-bsf=extract_extradata \
     --disable-protocols \
     --enable-protocol=file \
-    --enable-protocol=pipe \
     --enable-protocol=http \
     --enable-protocol=https \
-    --enable-protocol=rtmp \
-    --enable-protocol=rtsp \
-    --enable-protocol=udp \
     --disable-devices \
     --disable-filters \
     --enable-filter=scale \
     --enable-filter=thumbnail \
-    --enable-filter=setpts \
     --enable-filter=fps \
     --enable-filter=select \
-    --enable-filter=null \
     --enable-filter=format \
     --enable-filter=tile \
-    --enable-filter=pad \
-    --enable-filter=crop \
-    --enable-filter=hflip \
-    --enable-filter=vflip \
-    --enable-filter=transpose \
     --disable-swresample \
     --enable-swscale \
     --enable-avfilter \
@@ -140,6 +105,7 @@ RUN ./configure \
     --disable-faan \
     --disable-iamf \
     --disable-pixelutils \
+    --enable-zlib \
     --disable-bzlib \
     --disable-lzma \
     --disable-iconv \
@@ -172,6 +138,7 @@ RUN ./configure \
     --disable-symver \
     --disable-version-tracking \
     --disable-safe-bitstream-reader \
+    --disable-logging \
     --enable-mbedtls \
     --enable-gpl \
     --enable-small \
@@ -180,13 +147,13 @@ RUN ./configure \
     --enable-lto \
     --enable-static \
     --disable-shared \
-    --extra-cflags="-static -Oz -flto -ffunction-sections -fdata-sections" \
-    --extra-ldflags="-static -flto -Wl,--gc-sections -Wl,-s" \
+    --extra-cflags="-static -Oz -flto -ffunction-sections -fdata-sections -fno-unwind-tables -fno-asynchronous-unwind-tables" \
+    --extra-ldflags="-static -flto -Wl,--gc-sections -Wl,-s -Wl,--strip-all" \
     --prefix=/usr/local && \
     make -j$(nproc) && \
     make install && \
-    strip --strip-all /usr/local/bin/ffmpeg && \
-    upx --best --lzma /usr/local/bin/ffmpeg
+    strip --strip-all --remove-section=.comment --remove-section=.note /usr/local/bin/ffmpeg && \
+    upx --best --ultra-brute --lzma /usr/local/bin/ffmpeg
 
 # Stage 2: Final container with tools available
 FROM scratch
