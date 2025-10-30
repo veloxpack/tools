@@ -4,11 +4,14 @@ A minimal, statically-linked FFprobe Docker image built from scratch for fast an
 
 ## Features
 
-- **Lightweight**: Contains only ffprobe binary
+- **Ultra-Lightweight**: Only 1.21 MB compressed image size
 - **Static binary**: No runtime dependencies required
 - **Multi-architecture**: Supports both `linux/amd64` and `linux/arm64`
 - **Fast**: Minimal overhead for quick metadata extraction
 - **JSON output**: Perfect for programmatic media analysis
+- **Streaming Support**: HTTPS, HTTP, RTMP, RTSP, UDP protocols
+- **Format Support**: MP4, MOV, MPEGTS, Matroska (MKV), FLV
+- **Codec Parsing**: H.264, H.265/HEVC
 
 ## Use Cases
 
@@ -23,8 +26,12 @@ A minimal, statically-linked FFprobe Docker image built from scratch for fast an
 
 - **Registry**: `ghcr.io/veloxpack/ffprobe`
 - **Base**: `scratch` (no base image)
+- **Image Size**: ~1.21 MB (compressed)
 - **FFMPEG Version**: 8.0 (ffprobe only)
 - **Alpine Build Version**: 3.22.2
+- **SSL/TLS**: mbedTLS (lightweight alternative to OpenSSL)
+- **Compression**: UPX with LZMA
+- **Build Optimizations**: LTO, -Oz, aggressive stripping
 
 ## Pull the Image
 
@@ -93,6 +100,30 @@ docker run --rm -v $(pwd):/workspace \
   -show_entries stream=codec_type \
   -of default=noprint_wrappers=1:nokey=1 \
   /workspace/video.mp4
+```
+
+### Probe remote HTTP/HTTPS stream
+
+```bash
+docker run --rm ghcr.io/veloxpack/ffprobe \
+  -v quiet -print_format json -show_format -show_streams \
+  https://example.com/video.mp4
+```
+
+### Probe RTMP stream
+
+```bash
+docker run --rm ghcr.io/veloxpack/ffprobe \
+  -v quiet -print_format json -show_format -show_streams \
+  rtmp://server/live/stream
+```
+
+### Probe RTSP stream
+
+```bash
+docker run --rm ghcr.io/veloxpack/ffprobe \
+  -v quiet -print_format json -show_format -show_streams \
+  rtsp://camera:554/stream1
 ```
 
 ## Integration Example (Shell Script)
