@@ -1,18 +1,18 @@
-name: Build FFMPEG lite image
+name: Build FFmpeg Thumbnail image
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'ffmpeg-lite/Dockerfile'
-      - '.github/workflows/ffmpeg-lite-build.yaml'
+      - 'ffmpeg-thumbnail/Dockerfile'
+      - '.github/workflows/ffmpeg-thumbnail-build.yaml'
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg-lite
+  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg-thumbnail
   ALPINE_VERSION: "3.22.2"
-  MBEDTLS_VERSION: "v3.4.1"
+  MBEDTLS_VERSION: "v3.6.2"
   FFMPEG_VERSION: "8.0"
 
 jobs:
@@ -47,16 +47,16 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: ./ffmpeg-lite
-          file: ./ffmpeg-lite/Dockerfile
+          context: ./ffmpeg-thumbnail
+          file: ./ffmpeg-thumbnail/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           labels: |
-            org.opencontainers.image.title=FFMPEG Minimal
-            org.opencontainers.image.description=Minimal FFMPEG Docker image with essential codecs
+            org.opencontainers.image.title=FFmpeg Thumbnail
+            org.opencontainers.image.description=Ultra-lightweight FFmpeg image for thumbnail and sprite generation
             org.opencontainers.image.vendor=VeloxPack
             org.opencontainers.image.version=${{ env.FFMPEG_VERSION }}
           cache-from: type=gha
@@ -110,7 +110,9 @@ jobs:
           📝 **Important:** By default, packages are private. To make this image publicly accessible:
 
           1. Go to: https://github.com/${{ github.repository_owner }}/packages
-          2. Click on the \`ffmpeg-lite\` package
+          2. Click on the \`ffmpeg-thumbnail\` package
           3. Click "Package settings"
           4. Scroll to "Danger Zone"
           5. Click "Change visibility" → Select "Public"
+          EOF
+

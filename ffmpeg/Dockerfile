@@ -33,7 +33,8 @@ RUN apk update && \
     patch \
     perl \
     pkgconfig \
-    yasm
+    yasm \
+    upx
 
 WORKDIR /usr/src
 
@@ -142,14 +143,48 @@ RUN tar -xzf "ffmpeg-${FFMPEG_VERSION}.tar.gz"
 # Go into the extracted directory
 WORKDIR /usr/src/ffmpeg-$FFMPEG_VERSION
 
-# Configure and build ffmpeg only
+# Configure and build ffmpeg for video encoding/transcoding (no image generation)
 RUN ./configure \
     --pkg-config-flags="--static" \
     --disable-ffplay \
     --disable-ffprobe \
     --disable-doc \
+    --disable-htmlpages \
+    --disable-manpages \
+    --disable-podpages \
+    --disable-txtpages \
+    --disable-debug \
+    --disable-encoders \
+    --enable-encoder=libx264 \
+    --enable-encoder=libx265 \
+    --enable-encoder=libvpx_vp8 \
+    --enable-encoder=libvpx_vp9 \
+    --enable-encoder=libsvtav1 \
+    --enable-encoder=libmp3lame \
+    --enable-encoder=libopus \
+    --enable-encoder=aac \
     --disable-hwaccels \
     --disable-vaapi \
+    --disable-muxers \
+    --enable-muxer=mp4 \
+    --enable-muxer=mov \
+    --enable-muxer=matroska \
+    --enable-muxer=webm \
+    --enable-muxer=mpegts \
+    --enable-muxer=mp3 \
+    --enable-muxer=ogg \
+    --enable-muxer=flv \
+    --disable-protocols \
+    --enable-protocol=file \
+    --enable-protocol=http \
+    --enable-protocol=https \
+    --enable-protocol=rtmp \
+    --enable-protocol=rtsp \
+    --enable-protocol=udp \
+    --disable-autodetect \
+    --disable-swscale-alpha \
+    --disable-iamf \
+    --disable-pixelutils \
     --enable-libvpx \
     --enable-libsvtav1 \
     --enable-libx264 \
@@ -157,16 +192,19 @@ RUN ./configure \
     --enable-libmp3lame \
     --enable-libopus \
     --enable-mbedtls \
-    --enable-runtime-cpudetect \
     --enable-gpl \
+    --enable-small \
     --enable-version3 \
+    --enable-lto \
     --enable-static \
     --disable-shared \
-    --extra-cflags="-static" \
-    --extra-ldflags="-static" \
+    --extra-cflags="-static -Oz -flto -ffunction-sections -fdata-sections" \
+    --extra-ldflags="-static -flto -Wl,--gc-sections -Wl,-s" \
     --prefix=/usr/local && \
     make -j$(nproc) && \
-    make install
+    make install && \
+    strip --strip-all --remove-section=.comment --remove-section=.note /usr/local/bin/ffmpeg && \
+    upx --best --lzma /usr/local/bin/ffmpeg
 
 # Stage 2: Final container with tools available
 FROM scratch

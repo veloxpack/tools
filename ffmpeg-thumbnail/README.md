@@ -1,4 +1,4 @@
-# FFmpeg Lite
+# FFmpeg Thumbnail
 
 A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for thumbnail and sprite/storyboard generation. Stripped down to only essential video processing capabilities.
 
@@ -15,7 +15,7 @@ A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg-lite`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg-thumbnail`
 - **Base**: `scratch` (no base image)
 - **Image Size**: 2.39 MB (compressed)
 - **FFmpeg Version**: 8.0
@@ -58,7 +58,7 @@ A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-lite:latest
+docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
 ```
 
 ## Usage Examples
@@ -67,7 +67,7 @@ docker pull ghcr.io/veloxpack/ffmpeg-lite:latest
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -ss 5 \
   -vframes 1 \
@@ -78,7 +78,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -vf thumbnail \
   -frames:v 1 \
@@ -89,7 +89,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -ss 10 \
   -vframes 1 \
@@ -100,7 +100,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i https://example.com/video.mp4 \
   -ss 5 \
   -vframes 1 \
@@ -111,7 +111,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/10,scale=160:90,tile=5x5" \
   /output/storyboard.jpg
@@ -121,7 +121,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i https://example.com/video.webm \
   -loglevel error \
   -vf "fps=1/10,scale=160:90,tile=5x5" \
@@ -133,7 +133,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/60" \
   /output/thumb-%04d.jpg
@@ -143,7 +143,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -ss 5 \
   -vf "scale=320:180" \
@@ -157,7 +157,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/30,scale=200:112,tile=8x8" \
   /output/storyboard-8x8.png
@@ -167,7 +167,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /output/video.mp4 \
   -vf "select='not(mod(n\,300))',scale=320:180" \
   -vsync 0 \
@@ -206,5 +206,6 @@ docker run --rm -v $(pwd):/output \
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg-lite ./ffmpeg-lite
+docker build -t ffmpeg-thumbnail ./ffmpeg-thumbnail
 ```
+

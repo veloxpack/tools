@@ -21,20 +21,54 @@ docker pull ghcr.io/veloxpack/ffmpeg:latest
 
 ---
 
-### [FFmpeg Minimal](./ffmpeg-lite)
-**Lightweight video operations**
+### [FFmpeg Thumbnail](./ffmpeg-thumbnail)
+**Ultra-lightweight thumbnail & sprite generation**
 
-A minimal FFmpeg build optimized for lightweight operations like thumbnail generation, basic video processing, and quick conversions. Includes both `ffmpeg` and `ffprobe` binaries.
+An ultra-optimized FFmpeg build (2.39 MB) specifically for thumbnail and storyboard generation. Stripped down to only essential video decoders and image encoders.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-lite:latest
+docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
 ```
 
 **Key Features:**
-- Minimal size with essential codecs only
-- Perfect for thumbnail generation
-- Quick video processing tasks
-- Includes ffprobe for metadata extraction
+- Ultra-minimal size (2.39 MB)
+- Perfect for thumbnail/sprite generation
+- PNG and JPEG output support
+- H.264, VP8, VP9 video decoders
+
+---
+
+### [FFmpeg Split](./ffmpeg-split)
+**Video splitting & scene detection**
+
+Specialized FFmpeg build for splitting videos with scene detection support. Includes x264 encoder for re-encoding and stream copying for fast, lossless splits.
+
+```bash
+docker pull ghcr.io/veloxpack/ffmpeg-split:latest
+```
+
+**Key Features:**
+- Ultra-lightweight (~2-3 MB)
+- Scene detection with metadata export
+- Fast stream copying
+- H.264 encoding support
+
+---
+
+### [FFmpeg Concat](./ffmpeg-concat)
+**Video concatenation & merging**
+
+Specialized FFmpeg build for concatenating multiple videos. Supports advanced file list formats including duration metadata, trimming, and stream selection.
+
+```bash
+docker pull ghcr.io/veloxpack/ffmpeg-concat:latest
+```
+
+**Key Features:**
+- Ultra-lightweight (~1.5-2 MB)
+- Multiple concat methods (demuxer, protocol, filter)
+- Advanced file list formats
+- Inpoint/outpoint trimming support
 
 ---
 
@@ -109,7 +143,7 @@ docker run --rm -v $(pwd):/workspace \
 
 # 2. Generate thumbnail
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-lite \
+  ghcr.io/veloxpack/ffmpeg-thumbnail \
   -i /workspace/source.mp4 \
   -ss 00:00:10 -vframes 1 \
   /workspace/thumbnail.jpg
@@ -172,8 +206,14 @@ Each tool can be built independently:
 # Build FFmpeg
 docker build -t ffmpeg ./ffmpeg
 
-# Build FFmpeg Minimal
-docker build -t ffmpeg-lite ./ffmpeg-lite
+# Build FFmpeg Thumbnail
+docker build -t ffmpeg-thumbnail ./ffmpeg-thumbnail
+
+# Build FFmpeg Split
+docker build -t ffmpeg-split ./ffmpeg-split
+
+# Build FFmpeg Concat
+docker build -t ffmpeg-concat ./ffmpeg-concat
 
 # Build FFprobe
 docker build -t ffprobe ./ffprobe
@@ -189,7 +229,9 @@ docker build -t shaka-packager ./shaka-packager
 For detailed documentation on each tool, see the individual README files:
 
 - [FFmpeg Documentation](./ffmpeg/README.md)
-- [FFmpeg Minimal Documentation](./ffmpeg-lite/README.md)
+- [FFmpeg Thumbnail Documentation](./ffmpeg-thumbnail/README.md)
+- [FFmpeg Split Documentation](./ffmpeg-split/README.md)
+- [FFmpeg Concat Documentation](./ffmpeg-concat/README.md)
 - [FFprobe Documentation](./ffprobe/README.md)
 - [Shaka Packager Documentation](./shaka-packager/README.md)
 

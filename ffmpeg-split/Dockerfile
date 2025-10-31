@@ -15,15 +15,15 @@
 # Define build arguments
 ARG ALPINE_VERSION=3.22.2
 
-# Stage 1: Build ffmpeg (using a specific version)
+# Stage 1: Build ffmpeg for video splitting
 FROM alpine:${ALPINE_VERSION} AS ffmpeg-builder
 
-# Install dependencies (including upx for compression and zlib for PNG encoding)
-RUN apk add --no-cache build-base pkgconfig nasm yasm ca-certificates git cmake upx zlib-dev zlib-static
+# Install dependencies (including upx for compression)
+RUN apk add --no-cache build-base pkgconfig nasm yasm ca-certificates git cmake upx
 
 WORKDIR /usr/src
 
-# Build mbedTLS (much smaller than OpenSSL)
+# Build mbedTLS (for HTTPS support)
 ARG MBEDTLS_VERSION=v3.6.2
 RUN git clone --depth 1 --recurse-submodules --branch "$MBEDTLS_VERSION" https://github.com/ARMmbed/mbedtls.git && \
     cd mbedtls && \
@@ -38,15 +38,23 @@ RUN git clone --depth 1 --recurse-submodules --branch "$MBEDTLS_VERSION" https:/
     make -j$(nproc) && \
     make install
 
-# FFmpeg - A complete, cross-platform solution to record, convert, and stream audio and video.
+# x264 - H.264 encoder (needed for scene detection re-encoding)
+ARG X264_VERSION="0480cb05fa188d37ae87e8f4fd8f1aea3711f7ee"
+RUN git clone --depth 1 https://code.videolan.org/videolan/x264.git && \
+    cd x264 && \
+    git checkout $X264_VERSION && \
+    sh ./configure --disable-opencl --enable-static && \
+    make -j$(nproc) && \
+    make install
+
+# FFmpeg - Video splitting optimized build
 ARG FFMPEG_VERSION=8.0
 ADD "http://ffmpeg.org/releases/ffmpeg-${FFMPEG_VERSION}.tar.gz" "ffmpeg-${FFMPEG_VERSION}.tar.gz"
 RUN tar -xzf "ffmpeg-${FFMPEG_VERSION}.tar.gz"
 
-# Go into the extracted directory
 WORKDIR /usr/src/ffmpeg-$FFMPEG_VERSION
 
-# Configure and build ffmpeg for thumbnail generation only
+# Configure and build ffmpeg for video splitting (stream copy, no encoding)
 RUN ./configure \
     --disable-ffplay \
     --disable-ffprobe \
@@ -57,39 +65,51 @@ RUN ./configure \
     --disable-txtpages \
     --disable-debug \
     --disable-encoders \
-    --enable-encoder=png \
-    --enable-encoder=mjpeg \
+    --enable-encoder=copy \
+    --enable-encoder=libx264 \
+    --enable-encoder=aac \
     --disable-decoders \
     --enable-decoder=h264 \
+    --enable-decoder=hevc \
     --enable-decoder=vp8 \
     --enable-decoder=vp9 \
+    --enable-decoder=aac \
+    --enable-decoder=mp3 \
     --disable-hwaccels \
     --disable-muxers \
-    --enable-muxer=image2 \
-    --enable-muxer=image2pipe \
-    --enable-muxer=mjpeg \
+    --enable-muxer=mp4 \
+    --enable-muxer=mov \
+    --enable-muxer=matroska \
+    --enable-muxer=webm \
+    --enable-muxer=mpegts \
+    --enable-muxer=segment \
     --disable-demuxers \
     --enable-demuxer=mov \
     --enable-demuxer=mp4 \
     --enable-demuxer=matroska \
+    --enable-demuxer=mpegts \
     --disable-parsers \
     --enable-parser=h264 \
+    --enable-parser=hevc \
     --enable-parser=vp8 \
     --enable-parser=vp9 \
+    --enable-parser=aac \
+    --enable-parser=mpegaudio \
     --disable-bsfs \
     --enable-bsf=h264_mp4toannexb \
+    --enable-bsf=hevc_mp4toannexb \
+    --enable-bsf=aac_adtstoasc \
     --disable-protocols \
     --enable-protocol=file \
     --enable-protocol=http \
     --enable-protocol=https \
     --disable-devices \
     --disable-filters \
-    --enable-filter=scale \
-    --enable-filter=thumbnail \
-    --enable-filter=fps \
     --enable-filter=select \
-    --enable-filter=format \
-    --enable-filter=tile \
+    --enable-filter=showinfo \
+    --enable-filter=setpts \
+    --enable-filter=scale \
+    --enable-filter=metadata \
     --disable-swresample \
     --enable-swscale \
     --enable-avfilter \
@@ -105,7 +125,6 @@ RUN ./configure \
     --disable-faan \
     --disable-iamf \
     --disable-pixelutils \
-    --enable-zlib \
     --disable-bzlib \
     --disable-lzma \
     --disable-iconv \
@@ -138,7 +157,7 @@ RUN ./configure \
     --disable-symver \
     --disable-version-tracking \
     --disable-safe-bitstream-reader \
-    --disable-logging \
+    --enable-libx264 \
     --enable-mbedtls \
     --enable-gpl \
     --enable-small \
@@ -155,7 +174,7 @@ RUN ./configure \
     strip --strip-all --remove-section=.comment --remove-section=.note /usr/local/bin/ffmpeg && \
     upx --best --ultra-brute --lzma /usr/local/bin/ffmpeg
 
-# Stage 2: Final container with tools available
+# Stage 2: Final container
 FROM scratch
 
 # Copy ffmpeg
@@ -163,3 +182,4 @@ COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg /
 
 # Set the entrypoint
 ENTRYPOINT ["/ffmpeg"]
+
