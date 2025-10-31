@@ -10,7 +10,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/ffprobe
+  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg
+  VARIANT: probe
   ALPINE_VERSION: "3.22.2"
   FFMPEG_VERSION: "8.0"
   MBEDTLS_VERSION: "v3.6.2"
@@ -52,8 +53,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           labels: |
             org.opencontainers.image.title=FFprobe
             org.opencontainers.image.description=FFprobe Docker image for media file analysis
@@ -88,20 +89,20 @@ jobs:
           ### Pull Image
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
           \`\`\`
 
-          ### Specific Version
+          ### Latest Variant
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           \`\`\`
 
           ### Verify Attestation
 
           \`\`\`bash
           gh attestation verify \\
-            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \\
+            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }} \\
             --owner ${{ github.repository_owner }}
           \`\`\`
 
@@ -110,7 +111,7 @@ jobs:
           📝 **Important:** By default, packages are private. To make this image publicly accessible:
 
           1. Go to: https://github.com/${{ github.repository_owner }}/packages
-          2. Click on the \`ffprobe\` package
+          2. Click on the \`ffmpeg\` package
           3. Click "Package settings"
           4. Scroll to "Danger Zone"
           5. Click "Change visibility" → Select "Public"
@@ -140,7 +141,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull Docker image
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
 
       - name: Setup test environment
         run: make test-setup

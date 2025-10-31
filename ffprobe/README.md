@@ -24,7 +24,7 @@ A minimal, statically-linked FFprobe Docker image built from scratch for fast an
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffprobe`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg:8.0-probe`
 - **Base**: `scratch` (no base image)
 - **Image Size**: ~1.21 MB (compressed)
 - **FFMPEG Version**: 8.0 (ffprobe only)
@@ -36,7 +36,7 @@ A minimal, statically-linked FFprobe Docker image built from scratch for fast an
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffprobe:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-probe
 ```
 
 ## Usage Examples
@@ -45,7 +45,7 @@ docker pull ghcr.io/veloxpack/ffprobe:latest
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   /workspace/video.mp4
 ```
@@ -54,7 +54,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v error -show_entries format=duration \
   -of default=noprint_wrappers=1:nokey=1 \
   /workspace/video.mp4
@@ -64,7 +64,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v error -select_streams v:0 \
   -show_entries stream=width,height \
   -of csv=s=x:p=0 \
@@ -75,7 +75,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v error -select_streams v:0 \
   -show_entries stream=codec_name,codec_type \
   -of default=noprint_wrappers=1 \
@@ -86,7 +86,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -show_streams -show_format \
   /workspace/video.mp4
 ```
@@ -95,7 +95,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v error -select_streams v:0 \
   -show_entries stream=codec_type \
   -of default=noprint_wrappers=1:nokey=1 \
@@ -105,7 +105,7 @@ docker run --rm -v $(pwd):/workspace \
 ### Probe remote HTTP/HTTPS stream
 
 ```bash
-docker run --rm ghcr.io/veloxpack/ffprobe \
+docker run --rm ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   https://example.com/video.mp4
 ```
@@ -113,7 +113,7 @@ docker run --rm ghcr.io/veloxpack/ffprobe \
 ### Probe RTMP stream
 
 ```bash
-docker run --rm ghcr.io/veloxpack/ffprobe \
+docker run --rm ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   rtmp://server/live/stream
 ```
@@ -121,7 +121,7 @@ docker run --rm ghcr.io/veloxpack/ffprobe \
 ### Probe RTSP stream
 
 ```bash
-docker run --rm ghcr.io/veloxpack/ffprobe \
+docker run --rm ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   rtsp://camera:554/stream1
 ```
@@ -133,7 +133,7 @@ docker run --rm ghcr.io/veloxpack/ffprobe \
 
 # Extract video metadata
 metadata=$(docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   /workspace/video.mp4)
 
@@ -149,5 +149,5 @@ echo "Resolution: ${width}x${height}"
 ## Building Locally
 
 ```bash
-docker build -t ffprobe ./ffprobe
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-probe ./ffprobe
 ```

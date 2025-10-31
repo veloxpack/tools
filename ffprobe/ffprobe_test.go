@@ -17,7 +17,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-const ffprobeImage = "ghcr.io/veloxpack/ffprobe:latest"
+const ffprobeImage = "ghcr.io/veloxpack/ffmpeg:8.0-probe"
 
 type FFProbeOutput struct {
 	Format  FFProbeFormat   `json:"format"`

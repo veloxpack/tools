@@ -78,11 +78,11 @@ docker pull ghcr.io/veloxpack/ffmpeg:8.0-concat
 A standalone FFprobe image for fast and efficient media file analysis, metadata extraction, and format detection. Ideal for automated media validation and programmatic analysis.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffprobe:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-probe
 ```
 
 **Key Features:**
-- Lightweight (ffprobe only)
+- Ultra-lightweight (1.21 MB)
 - JSON output support
 - Fast metadata extraction
 - Stream analysis and codec detection
@@ -137,7 +137,7 @@ docker pull ghcr.io/veloxpack/shaka-packager:latest
 ```bash
 # 1. Analyze source video
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffprobe \
+  ghcr.io/veloxpack/ffmpeg:8.0-probe \
   -v quiet -print_format json -show_format -show_streams \
   /workspace/source.mp4
 
@@ -216,7 +216,7 @@ docker build -t ghcr.io/veloxpack/ffmpeg:8.0-split ./ffmpeg-split
 docker build -t ghcr.io/veloxpack/ffmpeg:8.0-concat ./ffmpeg-concat
 
 # Build FFprobe
-docker build -t ffprobe ./ffprobe
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-probe ./ffprobe
 
 # Build Shaka Packager
 docker build -t shaka-packager ./shaka-packager
