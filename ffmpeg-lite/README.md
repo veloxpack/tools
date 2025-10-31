@@ -1,6 +1,6 @@
-# FFMPEG
+# FFmpeg Lite
 
-A full-featured, statically-linked FFMPEG Docker image optimized for video transcoding with support for modern codecs including AV1, VP9, H.264, H.265, and audio codecs like Opus and MP3.
+A full-featured, statically-linked FFmpeg Docker image optimized for video transcoding with support for modern codecs including AV1, VP9, H.264, H.265, and audio codecs like Opus and MP3.
 
 ## Features
 
@@ -21,9 +21,9 @@ A full-featured, statically-linked FFMPEG Docker image optimized for video trans
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg:8.0-lite`
 - **Base**: `scratch` (no base image)
-- **FFMPEG Version**: 8.0
+- **FFmpeg Version**: 8.0
 - **Alpine Build Version**: 3.22.2
 
 ## Included Libraries
@@ -39,7 +39,7 @@ A full-featured, statically-linked FFMPEG Docker image optimized for video trans
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-lite
 ```
 
 ## Variants
@@ -56,7 +56,7 @@ This is the full-featured FFmpeg image. For specialized use cases, consider thes
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/input.mp4 \
   -c:v libx264 -preset medium -crf 23 \
   -c:a aac -b:a 128k \
@@ -67,7 +67,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/input.mp4 \
   -c:v libx265 -preset medium -crf 28 \
   -c:a aac -b:a 128k \
@@ -78,7 +78,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/input.mp4 \
   -c:v libsvtav1 -preset 6 -crf 35 \
   -c:a libopus -b:a 128k \
@@ -89,7 +89,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/input.mp4 \
   -c:v libvpx-vp9 -crf 30 -b:v 0 \
   -c:a libopus \
@@ -100,7 +100,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/input.mp4 \
   -c:v libx264 -preset fast \
   -map 0:v -s 1920x1080 -b:v 5000k -maxrate 5000k -bufsize 10000k \
@@ -116,5 +116,5 @@ docker run --rm -v $(pwd):/workspace \
 ## Building Locally
 
 ```bash
-docker build -t ghcr.io/veloxpack/ffmpeg:8.0 ./ffmpeg
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-lite ./ffmpeg-lite
 ```

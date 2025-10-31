@@ -1,4 +1,4 @@
-.PHONY: test-all test-ffprobe test-ffmpeg-thumbnail test-ffmpeg-split test-ffmpeg-concat test-ffmpeg test-shaka-packager help
+.PHONY: test-all test-ffprobe test-ffmpeg-thumbnail test-ffmpeg-split test-ffmpeg-concat test-ffmpeg-lite test-shaka-packager help
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -6,7 +6,7 @@ help: ## Show this help message
 	@echo 'Available targets:'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-test-all: test-ffprobe test-ffmpeg-thumbnail test-ffmpeg-split test-ffmpeg-concat test-ffmpeg test-shaka-packager ## Run all E2E tests
+test-all: test-ffprobe test-ffmpeg-thumbnail test-ffmpeg-split test-ffmpeg-concat test-ffmpeg-lite test-shaka-packager ## Run all E2E tests
 
 test-ffprobe: ## Run ffprobe E2E tests
 	@echo "Running ffprobe tests..."
@@ -24,9 +24,9 @@ test-ffmpeg-concat: ## Run ffmpeg-concat E2E tests
 	@echo "Running ffmpeg-concat tests..."
 	go test -v -timeout 5m ./ffmpeg-concat/...
 
-test-ffmpeg: ## Run ffmpeg E2E tests
-	@echo "Running ffmpeg tests..."
-	go test -v -timeout 10m ./ffmpeg/...
+test-ffmpeg-lite: ## Run ffmpeg-lite E2E tests
+	@echo "Running ffmpeg-lite tests..."
+	go test -v -timeout 10m ./ffmpeg-lite/...
 
 test-shaka-packager: ## Run shaka-packager E2E tests
 	@echo "Running shaka-packager tests..."

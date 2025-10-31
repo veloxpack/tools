@@ -19,7 +19,7 @@ import (
 	"github.com/testcontainers/testcontainers-go/wait"
 )
 
-const ffmpegImage = "ghcr.io/veloxpack/ffmpeg:latest"
+const ffmpegImage = "ghcr.io/veloxpack/ffmpeg:8.0-lite"
 
 func TestFFmpeg_Transcode_1080p_H264(t *testing.T) {
 	// Given: A test video file

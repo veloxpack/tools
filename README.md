@@ -4,13 +4,13 @@ This repository contains production-ready, statically-linked Docker images for m
 
 ## Available Tools
 
-### [FFmpeg](./ffmpeg)
+### [FFmpeg Lite](./ffmpeg-lite)
 **Full-featured video transcoding powerhouse**
 
 A complete FFmpeg build (16.84 MB) with modern codecs including AV1, VP9, H.264, H.265, Opus, and MP3. Perfect for high-quality video transcoding, multi-codec conversion, and adaptive bitrate streaming preparation.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-lite
 ```
 
 **Key Features:**
@@ -150,7 +150,7 @@ docker run --rm -v $(pwd):/workspace \
 
 # 3. Transcode to multiple bitrates
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg \
+  ghcr.io/veloxpack/ffmpeg:8.0-lite \
   -i /workspace/source.mp4 \
   -map 0:v -s 1920x1080 -b:v 5000k -c:v libx264 -preset medium /workspace/video_1080p.mp4 \
   -map 0:v -s 1280x720 -b:v 2800k -c:v libx264 -preset medium /workspace/video_720p.mp4 \
@@ -203,8 +203,8 @@ docker run --rm -v $(pwd):/workspace \
 Each tool can be built independently:
 
 ```bash
-# Build FFmpeg (full-featured)
-docker build -t ghcr.io/veloxpack/ffmpeg:8.0 ./ffmpeg
+# Build FFmpeg Lite (full-featured)
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-lite ./ffmpeg-lite
 
 # Build FFmpeg Thumbnail variant
 docker build -t ghcr.io/veloxpack/ffmpeg:8.0-thumbnail ./ffmpeg-thumbnail
@@ -251,7 +251,7 @@ make test-all
 
 For detailed documentation on each tool, see the individual README files:
 
-- [FFmpeg Documentation](./ffmpeg/README.md)
+- [FFmpeg Lite Documentation](./ffmpeg-lite/README.md)
 - [FFmpeg Thumbnail Documentation](./ffmpeg-thumbnail/README.md)
 - [FFmpeg Split Documentation](./ffmpeg-split/README.md)
 - [FFmpeg Concat Documentation](./ffmpeg-concat/README.md)

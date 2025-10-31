@@ -1,16 +1,17 @@
-name: Build FFMPEG image
+name: Build FFmpeg Lite image
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'ffmpeg/Dockerfile'
-      - '.github/workflows/ffmpeg-build.yaml'
+      - 'ffmpeg-lite/Dockerfile'
+      - '.github/workflows/ffmpeg-lite-build.yaml'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg
+  VARIANT: lite
   ALPINE_VERSION: "3.22.2"
   LAME_VERSION: "3.100"
   OPUS_VERSION: v1.4
@@ -52,16 +53,16 @@ jobs:
         id: push
         uses: docker/build-push-action@v6
         with:
-          context: ./ffmpeg
-          file: ./ffmpeg/Dockerfile
+          context: ./ffmpeg-lite
+          file: ./ffmpeg-lite/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           labels: |
-            org.opencontainers.image.title=FFMPEG
-            org.opencontainers.image.description=FFMPEG Docker image optimized for video transcoding with modern codecs
+            org.opencontainers.image.title=FFmpeg Lite
+            org.opencontainers.image.description=FFmpeg Lite Docker image optimized for video transcoding with modern codecs
             org.opencontainers.image.vendor=VeloxPack
             org.opencontainers.image.version=${{ env.FFMPEG_VERSION }}
           cache-from: type=gha
@@ -98,20 +99,20 @@ jobs:
           ### Pull Image
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
           \`\`\`
 
-          ### Specific Version
+          ### Latest Variant
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           \`\`\`
 
           ### Verify Attestation
 
           \`\`\`bash
           gh attestation verify \\
-            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \\
+            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }} \\
             --owner ${{ github.repository_owner }}
           \`\`\`
 
@@ -150,11 +151,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull Docker image
-        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
 
       - name: Setup test environment
         run: make test-setup
 
       - name: Run tests
-        run: make test-ffmpeg
+        run: make test-ffmpeg-lite
 

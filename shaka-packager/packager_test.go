@@ -20,7 +20,7 @@ import (
 
 const (
 	shakaPackagerImage = "ghcr.io/veloxpack/shaka-packager:latest"
-	ffmpegImage        = "ghcr.io/veloxpack/ffmpeg:latest"
+	ffmpegImage        = "ghcr.io/veloxpack/ffmpeg:8.0-lite"
 )
 
 // Helper functions
