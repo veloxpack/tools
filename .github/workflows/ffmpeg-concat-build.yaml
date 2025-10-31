@@ -10,9 +10,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg-concat
+  IMAGE_NAME: ${{ github.repository_owner }}/ffmpeg
+  VARIANT: concat
   ALPINE_VERSION: "3.22.2"
-  MBEDTLS_VERSION: "v3.6.2"
   FFMPEG_VERSION: "8.0"
 
 jobs:
@@ -52,8 +52,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           labels: |
             org.opencontainers.image.title=FFmpeg Concat
             org.opencontainers.image.description=Ultra-lightweight FFmpeg image for video concatenation
@@ -65,7 +65,6 @@ jobs:
           sbom: false
           build-args: |
             ALPINE_VERSION=${{ env.ALPINE_VERSION }}
-            MBEDTLS_VERSION=${{ env.MBEDTLS_VERSION }}
             FFMPEG_VERSION=${{ env.FFMPEG_VERSION }}
 
       - name: Generate artifact attestation
@@ -88,20 +87,20 @@ jobs:
           ### Pull Image
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }}
           \`\`\`
 
-          ### Specific Version
+          ### Latest Variant
 
           \`\`\`bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
           \`\`\`
 
           ### Verify Attestation
 
           \`\`\`bash
           gh attestation verify \\
-            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \\
+            oci://${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.FFMPEG_VERSION }}-${{ env.VARIANT }} \\
             --owner ${{ github.repository_owner }}
           \`\`\`
 
@@ -110,9 +109,41 @@ jobs:
           📝 **Important:** By default, packages are private. To make this image publicly accessible:
 
           1. Go to: https://github.com/${{ github.repository_owner }}/packages
-          2. Click on the \`ffmpeg-concat\` package
+          2. Click on the \`ffmpeg\` package
           3. Click "Package settings"
           4. Scroll to "Danger Zone"
           5. Click "Change visibility" → Select "Public"
           EOF
+
+  test:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Clone the code
+        uses: actions/checkout@v5
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull Docker image
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest-${{ env.VARIANT }}
+
+      - name: Setup test environment
+        run: make test-setup
+
+      - name: Run tests
+        run: make test-ffmpeg-concat
 

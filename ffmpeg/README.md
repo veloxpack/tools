@@ -42,6 +42,14 @@ A full-featured, statically-linked FFMPEG Docker image optimized for video trans
 docker pull ghcr.io/veloxpack/ffmpeg:latest
 ```
 
+## Variants
+
+This is the full-featured FFmpeg image. For specialized use cases, consider these lightweight variants:
+
+- **`ghcr.io/veloxpack/ffmpeg:8.0-thumbnail`** - Ultra-lightweight (2.39 MB) for thumbnail generation
+- **`ghcr.io/veloxpack/ffmpeg:8.0-split`** - Optimized (3.92 MB) for video splitting and scene detection
+- **`ghcr.io/veloxpack/ffmpeg:8.0-concat`** - Minimal (914 KB) for video concatenation
+
 ## Usage Examples
 
 ### Transcode to H.264
@@ -108,5 +116,5 @@ docker run --rm -v $(pwd):/workspace \
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg ./ffmpeg
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0 ./ffmpeg
 ```

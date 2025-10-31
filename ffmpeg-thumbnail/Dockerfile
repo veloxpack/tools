@@ -19,24 +19,9 @@ ARG ALPINE_VERSION=3.22.2
 FROM alpine:${ALPINE_VERSION} AS ffmpeg-builder
 
 # Install dependencies (including upx for compression and zlib for PNG encoding)
-RUN apk add --no-cache build-base pkgconfig nasm yasm ca-certificates git cmake upx zlib-dev zlib-static
+RUN apk add --no-cache build-base pkgconfig nasm yasm upx zlib-dev zlib-static
 
 WORKDIR /usr/src
-
-# Build mbedTLS (much smaller than OpenSSL)
-ARG MBEDTLS_VERSION=v3.6.2
-RUN git clone --depth 1 --recurse-submodules --branch "$MBEDTLS_VERSION" https://github.com/ARMmbed/mbedtls.git && \
-    cd mbedtls && \
-    git submodule update --init && \
-    cmake . \
-      -DCMAKE_INSTALL_PREFIX=/usr/local \
-      -DENABLE_PROGRAMS=OFF \
-      -DUNSAFE_BUILD=OFF \
-      -DGEN_FILES=OFF \
-      -DENABLE_TESTING=OFF \
-      -DBUILD_SHARED_LIBS=OFF && \
-    make -j$(nproc) && \
-    make install
 
 # FFmpeg - A complete, cross-platform solution to record, convert, and stream audio and video.
 ARG FFMPEG_VERSION=8.0
@@ -80,8 +65,6 @@ RUN ./configure \
     --enable-bsf=h264_mp4toannexb \
     --disable-protocols \
     --enable-protocol=file \
-    --enable-protocol=http \
-    --enable-protocol=https \
     --disable-devices \
     --disable-filters \
     --enable-filter=scale \
@@ -139,7 +122,6 @@ RUN ./configure \
     --disable-version-tracking \
     --disable-safe-bitstream-reader \
     --disable-logging \
-    --enable-mbedtls \
     --enable-gpl \
     --enable-small \
     --enable-version3 \

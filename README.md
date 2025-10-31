@@ -7,7 +7,7 @@ This repository contains production-ready, statically-linked Docker images for m
 ### [FFmpeg](./ffmpeg)
 **Full-featured video transcoding powerhouse**
 
-A complete FFmpeg build with modern codecs including AV1, VP9, H.264, H.265, Opus, and MP3. Perfect for high-quality video transcoding, multi-codec conversion, and adaptive bitrate streaming preparation.
+A complete FFmpeg build (16.84 MB) with modern codecs including AV1, VP9, H.264, H.265, Opus, and MP3. Perfect for high-quality video transcoding, multi-codec conversion, and adaptive bitrate streaming preparation.
 
 ```bash
 docker pull ghcr.io/veloxpack/ffmpeg:latest
@@ -15,7 +15,7 @@ docker pull ghcr.io/veloxpack/ffmpeg:latest
 
 **Key Features:**
 - Modern codecs: SVT-AV1, VP8/VP9, H.264 (x264), H.265 (x265)
-- Audio codecs: MP3 (LAME), Opus
+- Audio codecs: MP3 (LAME), Opus, AAC
 - Multi-architecture support (amd64/arm64)
 - Production-ready for professional video processing
 
@@ -27,7 +27,7 @@ docker pull ghcr.io/veloxpack/ffmpeg:latest
 An ultra-optimized FFmpeg build (2.39 MB) specifically for thumbnail and storyboard generation. Stripped down to only essential video decoders and image encoders.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-thumbnail
 ```
 
 **Key Features:**
@@ -44,11 +44,11 @@ docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
 Specialized FFmpeg build for splitting videos with scene detection support. Includes x264 encoder for re-encoding and stream copying for fast, lossless splits.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-split:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-split
 ```
 
 **Key Features:**
-- Ultra-lightweight (~2-3 MB)
+- Ultra-lightweight (3.92 MB)
 - Scene detection with metadata export
 - Fast stream copying
 - H.264 encoding support
@@ -58,17 +58,17 @@ docker pull ghcr.io/veloxpack/ffmpeg-split:latest
 ### [FFmpeg Concat](./ffmpeg-concat)
 **Video concatenation & merging**
 
-Specialized FFmpeg build for concatenating multiple videos. Supports advanced file list formats including duration metadata, trimming, and stream selection.
+Specialized FFmpeg build for concatenating multiple videos. Outputs MP4 and WebM formats only. Supports advanced file list formats including duration metadata, trimming, and stream selection.
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-concat:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-concat
 ```
 
 **Key Features:**
-- Ultra-lightweight (~1.5-2 MB)
+- Ultra-lightweight (914 KB)
+- MP4 and WebM output support
 - Multiple concat methods (demuxer, protocol, filter)
-- Advanced file list formats
-- Inpoint/outpoint trimming support
+- Advanced file list formats with trimming
 
 ---
 
@@ -92,7 +92,7 @@ docker pull ghcr.io/veloxpack/ffprobe:latest
 ### [Shaka Packager](./shaka-packager)
 **Adaptive streaming packaging**
 
-Google's industry-standard tool for DASH/HLS manifest generation, DRM encryption, and adaptive streaming preparation. Supports Widevine, PlayReady, and FairPlay encryption.
+Google's industry-standard tool (14.39 MB) for DASH/HLS manifest generation, DRM encryption, and adaptive streaming preparation. Supports Widevine, PlayReady, and FairPlay encryption.
 
 ```bash
 docker pull ghcr.io/veloxpack/shaka-packager:latest
@@ -143,7 +143,7 @@ docker run --rm -v $(pwd):/workspace \
 
 # 2. Generate thumbnail
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /workspace/source.mp4 \
   -ss 00:00:10 -vframes 1 \
   /workspace/thumbnail.jpg
@@ -172,25 +172,25 @@ docker run --rm -v $(pwd):/workspace \
 
 ## Use Cases
 
-### 🎥 Video Streaming Platforms
+### Video Streaming Platforms
 - Transcode user uploads to multiple formats
 - Generate adaptive streaming manifests
 - Create thumbnails and previews
 - Extract metadata for cataloging
 
-### 📱 Social Media Applications
+### Social Media Applications
 - Process video uploads efficiently
 - Generate mobile-optimized versions
 - Extract video information for UI display
 - Create preview thumbnails
 
-### 🎓 Educational Platforms
+### Educational Platforms
 - Convert lecture recordings to web formats
 - Create multi-quality streaming options
 - Generate video metadata for search
 - Optimize for bandwidth-constrained environments
 
-### 📺 Broadcast & Media
+### Broadcast & Media
 - Professional video transcoding workflows
 - DRM-protected content distribution
 - Live streaming preparation
@@ -203,23 +203,46 @@ docker run --rm -v $(pwd):/workspace \
 Each tool can be built independently:
 
 ```bash
-# Build FFmpeg
-docker build -t ffmpeg ./ffmpeg
+# Build FFmpeg (full-featured)
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0 ./ffmpeg
 
-# Build FFmpeg Thumbnail
-docker build -t ffmpeg-thumbnail ./ffmpeg-thumbnail
+# Build FFmpeg Thumbnail variant
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-thumbnail ./ffmpeg-thumbnail
 
-# Build FFmpeg Split
-docker build -t ffmpeg-split ./ffmpeg-split
+# Build FFmpeg Split variant
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-split ./ffmpeg-split
 
-# Build FFmpeg Concat
-docker build -t ffmpeg-concat ./ffmpeg-concat
+# Build FFmpeg Concat variant
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-concat ./ffmpeg-concat
 
 # Build FFprobe
 docker build -t ffprobe ./ffprobe
 
 # Build Shaka Packager
 docker build -t shaka-packager ./shaka-packager
+```
+
+---
+
+## Testing
+
+### Prerequisites
+
+- Go 1.21+ installed
+- Docker running locally
+- Internet connection (for downloading test containers)
+
+### Quick Start
+
+```bash
+# 1. Setup test environment (downloads sample video)
+make test-setup
+
+# 2. Install Go dependencies
+go mod download
+
+# 3. Run all tests
+make test-all
 ```
 
 ---

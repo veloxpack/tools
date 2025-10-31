@@ -20,7 +20,7 @@ FROM alpine:${ALPINE_VERSION} AS shaka-packager-builder
 
 # Install utilities, libraries, and dev tools.
 RUN apk add --no-cache \
-        bash bsd-compat-headers build-base cmake curl git linux-headers ninja python3
+        bash bsd-compat-headers build-base cmake curl git linux-headers ninja python3 upx
 
 # Set Shaka Packager version as an argument
 ARG SHAKA_PACKAGER_VERSION=v3.4.2
@@ -33,31 +33,31 @@ RUN git clone --recursive --depth 1 --branch "$SHAKA_PACKAGER_VERSION" https://g
 # Build Shaka Packager (now in the correct directory)
 WORKDIR /usr/src/shaka-packager
 
-RUN rm -rf build # Ensure clean build
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G Ninja
+# Build with fully static linking for scratch container
+ENV PACKAGER_LOW_MEMORY_BUILD=yes
+RUN rm -rf build
+RUN cmake -S . -B build \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_SHARED_LIBS=OFF \
+    -DFULLY_STATIC=ON \
+    -G Ninja
 RUN cmake --build build/ --config Release --parallel
 
-# Stage 2: Final container with tools available
-# FROM alpine:${ALPINE_VERSION}
+# Strip debug symbols to reduce binary size
+RUN strip /usr/src/shaka-packager/build/packager/packager
 
-# Install runtime dependencies (libstdc++ and python3)
-# RUN apk add --no-cache libstdc++ python3
+# Compress binary with UPX for maximum size reduction
+RUN upx --best --lzma /usr/src/shaka-packager/build/packager/packager
 
-# Copy Shaka Packager binaries to our final image.
-# COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/packager /usr/local/bin/
-# COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/mpd_generator /usr/local/bin/
-# COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/pssh-box.py /usr/local/bin/
-
-# Copy pyproto directory, which is needed by pssh-box.py script. This line
-# cannot be combined with the line above as Docker's copy command skips the
-# directory itself. See https://github.com/moby/moby/issues/15858 for details.
-# COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/pssh-box-protos /usr/local/bin/pssh-box-protos
-
-# Stage 2: Final container with tools available
+# Stage 2: Minimal scratch container with static binary
 FROM scratch
 
 # Copy Shaka Packager binaries to our final image.
 COPY --from=shaka-packager-builder /usr/src/shaka-packager/build/packager/packager /
 
+# Create /tmp directory for Shaka Packager temporary files
+COPY --from=shaka-packager-builder --chown=0:0 --chmod=1777 /tmp /tmp
+
 # Set the entrypoint
 ENTRYPOINT ["/packager"]
+

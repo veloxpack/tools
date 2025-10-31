@@ -119,20 +119,6 @@ RUN git clone --depth 1 --branch "$X265_VERSION" https://bitbucket.org/multicore
     # found (or needed), and -lpthread missing)
     sed -e 's/-lgcc_s -lgcc -lgcc_s -lgcc/-lpthread -lgcc/' -i.bk /usr/local/lib/pkgconfig/x265.pc
 
-# MbedTLS - Lightweight cryptographic library for secure communications.
-ARG MBEDTLS_VERSION=v3.4.1
-RUN git clone --depth 1 --branch "$MBEDTLS_VERSION" https://github.com/ARMmbed/mbedtls.git && \
-    cd mbedtls && \
-    sed -e 's/-Wdocumentation//' -e 's/-Wno-documentation-deprecated-sync//' -i.bk library/CMakeLists.txt && \
-    cmake . \
-      -DCMAKE_INSTALL_PREFIX=/usr/local \
-      -DENABLE_PROGRAMS=OFF \
-      -DUNSAFE_BUILD=OFF \
-      -DGEN_FILES=OFF \
-      -DENABLE_TESTING=OFF && \
-    make -j$(nproc) && \
-    make install
-
 # Define the FFmpeg version
 ARG FFMPEG_VERSION=8.0
 
@@ -176,8 +162,6 @@ RUN ./configure \
     --enable-muxer=flv \
     --disable-protocols \
     --enable-protocol=file \
-    --enable-protocol=http \
-    --enable-protocol=https \
     --enable-protocol=rtmp \
     --enable-protocol=rtsp \
     --enable-protocol=udp \
@@ -191,7 +175,6 @@ RUN ./configure \
     --enable-libx265 \
     --enable-libmp3lame \
     --enable-libopus \
-    --enable-mbedtls \
     --enable-gpl \
     --enable-small \
     --enable-version3 \
@@ -209,7 +192,7 @@ RUN ./configure \
 # Stage 2: Final container with tools available
 FROM scratch
 
-# Copy ffmpeg
+# Copy ffmpeg to the final image
 COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg /
 
 # Set the entrypoint

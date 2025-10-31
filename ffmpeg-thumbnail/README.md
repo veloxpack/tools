@@ -10,17 +10,16 @@ A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for
 - **Optimized for Thumbnails**: Specifically configured for thumbnail and sprite generation
 - **Video Decoders**: H.264, VP8, VP9 support
 - **Image Encoders**: PNG and JPEG/MJPEG output
-- **Streaming Support**: HTTP/HTTPS protocols
+- **Local Files Only**: Optimized for local video file processing
 - **Format Support**: MP4, MOV, Matroska (WebM/MKV)
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg-thumbnail`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg:8.0-thumbnail`
 - **Base**: `scratch` (no base image)
 - **Image Size**: 2.39 MB (compressed)
 - **FFmpeg Version**: 8.0
 - **Alpine Build Version**: 3.22.2
-- **SSL/TLS**: mbedTLS (lightweight alternative to OpenSSL)
 - **Compression**: UPX with LZMA
 - **Build Optimizations**: LTO, -Oz, aggressive stripping
 
@@ -44,8 +43,7 @@ A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for
 - `format` - Pixel format conversion
 
 ### Protocols
-- File (local files)
-- HTTP/HTTPS (remote streams)
+- File (local files only)
 
 ## Use Cases
 
@@ -58,7 +56,7 @@ A highly optimized, ultra-lightweight FFmpeg Docker image built specifically for
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-thumbnail
 ```
 
 ## Usage Examples
@@ -67,7 +65,7 @@ docker pull ghcr.io/veloxpack/ffmpeg-thumbnail:latest
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -ss 5 \
   -vframes 1 \
@@ -78,7 +76,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -vf thumbnail \
   -frames:v 1 \
@@ -89,43 +87,20 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -ss 10 \
   -vframes 1 \
   /output/thumbnail.png
 ```
 
-### Process remote HTTP/HTTPS stream
-
-```bash
-docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
-  -i https://example.com/video.mp4 \
-  -ss 5 \
-  -vframes 1 \
-  /output/thumbnail.jpg
-```
-
 ### Generate storyboard / sprite sheet (5x5 grid)
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/10,scale=160:90,tile=5x5" \
-  /output/storyboard.jpg
-```
-
-### Create storyboard from remote WebM video
-
-```bash
-docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
-  -i https://example.com/video.webm \
-  -loglevel error \
-  -vf "fps=1/10,scale=160:90,tile=5x5" \
-  -threads 4 \
   /output/storyboard.jpg
 ```
 
@@ -133,7 +108,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/60" \
   /output/thumb-%04d.jpg
@@ -143,7 +118,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -ss 5 \
   -vf "scale=320:180" \
@@ -157,7 +132,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -vf "fps=1/30,scale=200:112,tile=8x8" \
   /output/storyboard-8x8.png
@@ -167,7 +142,7 @@ docker run --rm -v $(pwd):/output \
 
 ```bash
 docker run --rm -v $(pwd):/output \
-  ghcr.io/veloxpack/ffmpeg-thumbnail \
+  ghcr.io/veloxpack/ffmpeg:8.0-thumbnail \
   -i /output/video.mp4 \
   -vf "select='not(mod(n\,300))',scale=320:180" \
   -vsync 0 \
@@ -182,13 +157,13 @@ docker run --rm -v $(pwd):/output \
 - Advanced video codecs (HEVC, AV1, MPEG-4 removed for size)
 - Hardware acceleration
 - Complex filters (blur, overlay, etc.)
-- Streaming protocols (RTMP, RTSP, UDP)
+- Network protocols (HTTP, HTTPS, RTMP, RTSP, UDP) - local files only
 
 ### What This Image IS For
-✅ Thumbnail generation
-✅ Sprite/storyboard creation
-✅ Frame extraction
-✅ Basic image scaling
+Thumbnail generation
+Sprite/storyboard creation
+Frame extraction
+Basic image scaling
 
 ### What This Image IS NOT For
 ❌ Full video encoding/transcoding
@@ -206,6 +181,6 @@ docker run --rm -v $(pwd):/output \
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg-thumbnail ./ffmpeg-thumbnail
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-thumbnail ./ffmpeg-thumbnail
 ```
 

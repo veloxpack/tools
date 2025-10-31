@@ -4,23 +4,23 @@ Ultra-lightweight FFmpeg Docker image optimized specifically for splitting video
 
 ## Features
 
-- **Ultra-Lightweight**: Minimal binary size (estimated ~2-3 MB)
+- **Ultra-Lightweight**: Only 3.92 MB compressed image size
 - **Stream Copy**: No re-encoding for fast splits
 - **Scene Detection**: Automatically split on scene changes
 - **Metadata Export**: Export scene timestamps for automation
 - **H.264 Encoding**: Re-encode when needed (scene detection)
 - **Fast**: Split videos quickly with or without transcoding
 - **Format Support**: MP4, MOV, Matroska (MKV/WebM), MPEGTS
-- **Protocol Support**: File, HTTP, HTTPS
+- **Protocol Support**: File (local files only)
 - **Static binary**: No runtime dependencies
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg-split`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg:8.0-split`
 - **Base**: `scratch` (no base image)
+- **Image Size**: 3.92 MB (compressed)
 - **FFmpeg Version**: 8.0
 - **Alpine Build Version**: 3.22.2
-- **SSL/TLS**: mbedTLS
 - **Compression**: UPX with LZMA
 - **Build Optimizations**: LTO, -Oz, aggressive stripping
 
@@ -43,8 +43,7 @@ Ultra-lightweight FFmpeg Docker image optimized specifically for splitting video
 - `scale` - Resize frames
 
 ### Protocols
-- File (local files)
-- HTTP/HTTPS (remote streams)
+- File (local files only)
 
 ## Use Cases
 
@@ -59,7 +58,7 @@ Ultra-lightweight FFmpeg Docker image optimized specifically for splitting video
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-split:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-split
 ```
 
 ## Usage Examples
@@ -68,7 +67,7 @@ docker pull ghcr.io/veloxpack/ffmpeg-split:latest
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -c copy \
   -f segment \
@@ -81,7 +80,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -ss 00:01:30 \
   -to 00:05:00 \
@@ -93,7 +92,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -c copy \
   -f segment \
@@ -105,7 +104,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -c copy \
   -f segment \
@@ -117,30 +116,18 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -t 30 \
   -c copy \
   /workspace/first-30s.mp4
 ```
 
-### Split from remote URL
-
-```bash
-docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
-  -i https://example.com/video.mp4 \
-  -ss 60 \
-  -t 120 \
-  -c copy \
-  /workspace/clip.mp4
-```
-
 ### Split with segment list output
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -c copy \
   -f segment \
@@ -153,7 +140,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.4)',showinfo" \
   -vsync vfr \
@@ -165,7 +152,7 @@ docker run --rm -v $(pwd):/workspace \
 ```bash
 # Lower threshold (0.3) = more sensitive, more scenes detected
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.3)'" \
   -vsync vfr \
@@ -173,7 +160,7 @@ docker run --rm -v $(pwd):/workspace \
 
 # Higher threshold (0.5) = less sensitive, fewer scenes
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.5)'" \
   -vsync vfr \
@@ -184,7 +171,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.4)'" \
   -vsync vfr \
@@ -198,7 +185,7 @@ docker run --rm -v $(pwd):/workspace \
 ```bash
 # Export scene metadata to a file for later processing
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.4)',metadata=print:file=/workspace/scenes.txt" \
   -vsync vfr \
@@ -210,7 +197,7 @@ docker run --rm -v $(pwd):/workspace \
 ```bash
 # Programmatic scene detection (useful for automation)
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-split \
+  ghcr.io/veloxpack/ffmpeg:8.0-split \
   -i /workspace/input.mp4 \
   -vf "select='gt(scene,0.35)',metadata=print:file=/workspace/scene_timestamps.txt" \
   -vsync vfr \
@@ -243,17 +230,18 @@ docker run --rm -v $(pwd):/workspace \
 ### Not Included
 - Advanced video encoders (only libx264 and copy)
 - Advanced audio encoders (only AAC and copy)
-- Complex filters (only select, showinfo, setpts, scale)
+- Complex filters (only select, showinfo, setpts, scale, metadata)
 - Thumbnail generation
 - Hardware acceleration
+- Network protocols (HTTP, HTTPS, RTMP) - local files only
 
 ### What This Image IS For
-✅ Fast video splitting (stream copy)
-✅ Scene-based video splitting
-✅ Extracting video clips
-✅ Segmenting videos
-✅ Lossless trimming
-✅ Content-aware splitting
+Fast video splitting (stream copy)
+Scene-based video splitting
+Extracting video clips
+Segmenting videos
+Lossless trimming
+Content-aware splitting
 
 ### What This Image IS NOT For
 ❌ Advanced video transcoding
@@ -272,6 +260,6 @@ docker run --rm -v $(pwd):/workspace \
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg-split ./ffmpeg-split
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-split ./ffmpeg-split
 ```
 

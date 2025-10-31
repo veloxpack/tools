@@ -4,22 +4,22 @@ Ultra-lightweight FFmpeg Docker image optimized specifically for concatenating v
 
 ## Features
 
-- **Ultra-Lightweight**: Minimal binary size (estimated ~1.5-2 MB)
+- **Ultra-Lightweight**: Only 914 KB compressed image size
 - **Stream Copy**: No re-encoding, preserves original quality
 - **Fast**: Concatenate videos in seconds without transcoding
 - **Multiple Methods**: Concat demuxer, concat protocol, and concat filter
 - **Advanced File Lists**: Support for duration, inpoint/outpoint, trimming, stream selection
-- **Format Support**: MP4, MOV, Matroska (MKV/WebM), MPEGTS
-- **Protocol Support**: File, HTTP, HTTPS, concat
+- **Format Support**: MP4, WebM (input: MP4/MOV, Matroska/WebM)
+- **Protocol Support**: File, concat (local files only)
 - **Static binary**: No runtime dependencies
 
 ## Image Details
 
-- **Registry**: `ghcr.io/veloxpack/ffmpeg-concat`
+- **Registry**: `ghcr.io/veloxpack/ffmpeg:8.0-concat`
 - **Base**: `scratch` (no base image)
+- **Image Size**: 914 KB (compressed)
 - **FFmpeg Version**: 8.0
 - **Alpine Build Version**: 3.22.2
-- **SSL/TLS**: mbedTLS
 - **Compression**: UPX with LZMA
 - **Build Optimizations**: LTO, -Oz, aggressive stripping
 
@@ -36,7 +36,7 @@ Ultra-lightweight FFmpeg Docker image optimized specifically for concatenating v
 ## Pull the Image
 
 ```bash
-docker pull ghcr.io/veloxpack/ffmpeg-concat:latest
+docker pull ghcr.io/veloxpack/ffmpeg:8.0-concat
 ```
 
 ## Usage Examples
@@ -55,7 +55,7 @@ EOF
 
 # Concatenate
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/filelist.txt \
@@ -74,7 +74,7 @@ file 'video3.mp4'
 EOF
 
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/list.txt \
@@ -86,7 +86,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -i "concat:/workspace/video1.mp4|/workspace/video2.mp4|/workspace/video3.mp4" \
   -c copy \
   /workspace/output.mp4
@@ -96,7 +96,7 @@ docker run --rm -v $(pwd):/workspace \
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -i /workspace/video1.mp4 \
   -i /workspace/video2.mp4 \
   -i /workspace/video3.mp4 \
@@ -117,7 +117,7 @@ file '/workspace/clip3.mp4'
 EOF
 
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/list.txt \
@@ -125,23 +125,11 @@ docker run --rm -v $(pwd):/workspace \
   /workspace/merged.mp4
 ```
 
-### Concatenate MPEGTS files directly
-
-```bash
-# MPEGTS can be concatenated with simple cat
-docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
-  -i "concat:/workspace/part1.ts|/workspace/part2.ts|/workspace/part3.ts" \
-  -c copy \
-  -bsf:a aac_adtstoasc \
-  /workspace/output.mp4
-```
-
 ### Concatenate with timestamps preserved
 
 ```bash
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/list.txt \
@@ -161,31 +149,12 @@ file 'video3.webm'
 EOF
 
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/list.txt \
   -c copy \
   /workspace/output.webm
-```
-
-### Concatenate remote videos
-
-```bash
-cat > /workspace/list.txt << EOF
-file 'https://example.com/video1.mp4'
-file 'https://example.com/video2.mp4'
-file 'https://example.com/video3.mp4'
-EOF
-
-docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
-  -f concat \
-  -safe 0 \
-  -protocol_whitelist file,http,https,tcp,tls \
-  -i /workspace/list.txt \
-  -c copy \
-  /workspace/output.mp4
 ```
 
 ## FFmpeg File List Formats
@@ -244,7 +213,7 @@ outpoint 45.0
 EOF
 
 docker run --rm -v $(pwd):/workspace \
-  ghcr.io/veloxpack/ffmpeg-concat \
+  ghcr.io/veloxpack/ffmpeg:8.0-concat \
   -f concat \
   -safe 0 \
   -i /workspace/trimlist.txt \
@@ -301,17 +270,12 @@ If videos have different properties, you'll need to re-encode (use main ffmpeg i
 
 ### Format-Specific Tips
 
-**MP4/MOV Files:**
+**MP4 Output:**
 ```bash
 -c copy -movflags +faststart
 ```
 
-**MPEGTS Files:**
-```bash
--c copy -bsf:a aac_adtstoasc
-```
-
-**WebM/Matroska:**
+**WebM Output:**
 ```bash
 -c copy
 ```
@@ -338,18 +302,25 @@ Use `-safe 0` or provide only filenames (not paths):
 
 ## Limitations
 
+### Supported Output Formats
+- **MP4** - Most common web/mobile format
+- **WebM** - Web-optimized VP8/VP9 format
+- ❌ **MOV, MKV, MPEG-TS** - Not supported (use main ffmpeg image)
+
 ### Not Included
 - Video encoding/transcoding
 - Audio encoding/transcoding
 - Video filters (except concat filter)
 - Format conversion with re-encoding
 - Hardware acceleration
+- MOV, MKV, MPEG-TS output formats
+- Network protocols (HTTP, HTTPS, RTMP) - local files only
 
 ### What This Image IS For
-✅ Fast video concatenation
-✅ Merging same-format videos
-✅ Joining video segments
-✅ Lossless video stitching
+Fast MP4/WebM concatenation
+Merging transcoded videos (same codec/resolution/fps)
+Joining video segments
+Lossless video stitching
 
 ### What This Image IS NOT For
 ❌ Concatenating different formats (requires re-encoding)
@@ -361,13 +332,13 @@ Use `-safe 0` or provide only filenames (not paths):
 
 - Always use `-c copy` for stream copying (no re-encoding)
 - Use the concat demuxer method for most reliable results
-- Ensure all input videos have matching properties
+- Ensure all input videos have matching properties (codec, resolution, frame rate)
 - Use `-safe 0` when working with absolute paths
-- Consider using MPEGTS intermediate format for better compatibility
+- Use `-movflags +faststart` for MP4 output to enable faster streaming
 
 ## Building Locally
 
 ```bash
-docker build -t ffmpeg-concat ./ffmpeg-concat
+docker build -t ghcr.io/veloxpack/ffmpeg:8.0-concat ./ffmpeg-concat
 ```
 

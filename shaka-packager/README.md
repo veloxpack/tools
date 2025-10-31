@@ -23,6 +23,7 @@ A minimal, statically-linked Shaka Packager Docker image for media packaging, en
 
 - **Registry**: `ghcr.io/veloxpack/shaka-packager`
 - **Base**: `scratch` (no base image)
+- **Size**: 5.62 MB
 - **Shaka Packager Version**: v3.4.2
 - **Alpine Build Version**: 3.22.2
 
